@@ -1,0 +1,24 @@
+.menu-hover-button {
+    color: #F2F1F1
+}
+
+.menu-hover-button:hover {
+    animation: transfer .5s forwards !important;
+}
+
+@keyframes transfer {
+    from {
+        color: #ffffff
+    }
+    to {
+        color: #EEC13F
+    }
+}
+
+.upper-button:hover {
+    background-color: #404040;
+}
+
+.lower-button:hover {
+    background-color: #404040;
+}

@@ -1,0 +1,54 @@
+.filter-tab {
+    animation-name: open;
+    animation-fill-mode: forwards;
+    animation-duration: 0.5s;
+}
+
+@keyframes open {
+    from {
+        width: 0%;
+    }
+
+    to {
+        width: 99.5%;
+    }
+}
+
+.input>.ant-input-number-input {
+    position: relative !important;
+    top: 10% !important;
+}
+
+.collection-filter-button:hover {
+    transform: translateY(-5px);
+    box-shadow: 0px 0px 5px #ffffff;
+    background-color: rgb(255, 255, 255, 0.2) !important;
+}
+
+.ant-empty-description {
+    color: #EEC13F !important;
+}
+
+.ant-input-group-wrapper {
+    padding: 0 !important;
+}
+
+.ant-input-wrapper {
+    height: 100% !important;
+}
+
+.ant-input-affix-wrapper {
+    border-radius: 10px 0 0 10px !important;
+    height: 100% !important;
+}
+
+.ant-input-group-addon {
+    background-color: transparent !important;
+}
+
+.ant-input-search-button {
+    border-radius: 0 10px 10px 0 !important;
+    height: 100% !important;
+    background-color: #EEC13F !important;
+    color: black !important;
+}

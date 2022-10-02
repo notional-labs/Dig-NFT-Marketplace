@@ -1,0 +1,91 @@
+
+@font-face {
+  font-family: 'GMV DIN Pro';
+  font-weight: 500;
+  src: local('GMV DIN Pro'), url(./assets/font/GMV_DIN_Pro-Medium.ttf) format('opentype');
+}
+
+@font-face {
+  font-family: 'GMV DIN Pro';
+  font-weight: 900;
+  src: local('GMV DIN Pro'), url(./assets/font/GMV_DIN_Pro-Bold.ttf) format('opentype');
+}
+
+.App {
+  min-height: 100vh;
+  height: 100%;
+  font-family: 'GMV DIN Pro';
+}
+
+.buy-button:hover {
+  animation-name: faded;
+  animation-fill-mode: forwards;
+  animation-duration: 1s;
+}
+
+@keyframes faded {
+  from {
+      color: #000000
+  }
+  to {
+      color: #F2F1F1
+  }
+}
+
+.glow-card {
+  padding: 1em;
+  border-radius: 10px;
+}
+
+.glow-card:hover {
+  animation-name: glow;
+  animation-duration: .5s;
+  animation-fill-mode: forwards;
+}
+
+@keyframes glow {
+  from {
+      background-color: none;
+  }
+
+  to {
+      background-color: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.ant-modal-content {
+  border-radius: 30px !important;
+  background: #000000 !important;
+}
+
+.ant-notification-notice {
+  background: white !important;
+  border-radius: 10px !important;
+}
+
+.ant-notification-notice-message {
+  color: black !important;
+  font-size: 20px !important;
+}
+
+.ant-notification-notice-close {
+  color: black !important;
+  font-size: 16px !important;
+}
+ 
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  display: none;
+  background: transparent
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #EEC13F; 
+  border-radius: 10px;
+}
