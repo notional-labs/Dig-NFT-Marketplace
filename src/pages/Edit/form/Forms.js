@@ -134,18 +134,33 @@ const Forms = ({ account }) => {
                                     borderRadius: '50%',
                                     justifyContent: 'center',
                                     textAlign: 'center',
-                                    backgroundColor: '#C4C4C4'
+                                    backgroundColor: '#C4C4C4',
+                                    overflow: 'hidden'
                                 }}
                             >
-                                <Image
-                                    src={imgUrlLogo || noAvtImg}
-                                    preview={false}
-                                    width={'25%'}
-                                    style={{
-                                        position: 'relative',
-                                        top: '40%',
-                                    }}
-                                />
+                                {
+                                    !imgUrlLogo ? (
+                                        <Image
+                                            src={noAvtImg}
+                                            preview={false}
+                                            width={'25%'}
+                                            style={{
+                                                position: 'relative',
+                                                top: '40%',
+                                            }}
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={imgUrlLogo}
+                                            preview={false}
+                                            width={'100%'}
+                                            height={'100%'}
+                                            style={{
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    )
+                                }
                             </div>
                         </label>
                     </div>
@@ -193,15 +208,29 @@ const Forms = ({ account }) => {
                                     backgroundColor: '#C4C4C4'
                                 }}
                             >
-                                <Image
-                                    src={imgUrlBanner || noAvtImg}
-                                    preview={false}
-                                    width={'7%'}
-                                    style={{
-                                        position: 'relative',
-                                        top: '40%'
-                                    }}
-                                />
+                                {
+                                    !imgUrlBanner ? (
+                                        <Image
+                                            src={noAvtImg}
+                                            preview={false}
+                                            width={'7%'}
+                                            style={{
+                                                position: 'relative',
+                                                top: '40%'
+                                            }}
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={imgUrlBanner}
+                                            preview={false}
+                                            width={'100%'}
+                                            height={'100%'}
+                                            style={{
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    )
+                                }
                             </div>
                         </label>
                     </div>

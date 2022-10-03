@@ -6,6 +6,9 @@ import ConnectButton from "../header/connect_button/ConnectButton"
 import Header from "../header/Header"
 import ConnectWalletPage from "../Connect_wallet_error_page/Index"
 import ModelCreate from "../Model_create/Index"
+import singleNftImg from '../../assets/img/single-nft.png'
+import collectionImg from '../../assets/img/collection.png'
+import { Image } from "antd"
 
 const style = {
     container: {
@@ -19,15 +22,43 @@ const style = {
     },
     button: {
         border: 'solid 1px #EEC13F',
-        fontSize: '32px',
+        fontSize: '16px',
         fontWeight: 'bold',
-        width: '8em',
-        cursor: 'pointer'
+        width: '50%',
+        cursor: 'pointer',
+        marginTop: '30px',
+        borderRadius: '10px',
+        padding: '1em 0',
+        backgroundColor: '#EEC13F',
+        color: 'black'
     },
 }
 
 const CreatePage = ({ account, wrapSetAccount }) => {
-    const [tabSelect, setTabSelect] = useState(1)
+    const [tabSelect, setTabSelect] = useState(0)
+
+    const returnButton = (
+        <div>
+            <Button
+                type={'function'}
+                style={{
+                    border: 'none',
+                    fontSize: '16px',
+                    fontWeight: 'bold',
+                    cursor: 'pointer',
+                    borderRadius: '10px',
+                    padding: '1em 0',
+                    backgroundColor: '#EEC13F',
+                    color: 'black',
+                    width: '10%'
+                }}
+                clickFunction={() => {
+                    changeTab(0)
+                }}
+                text={'Back'}
+            />
+        </div>
+    )
 
     const changeTab = (value) => {
         setTabSelect(value)
@@ -42,70 +73,7 @@ const CreatePage = ({ account, wrapSetAccount }) => {
                 wrapSetAccount={wrapSetAccount}
             />
             {
-                account ? (
-                    <div
-                        style={{
-                            padding: '3em 35em',
-                            position: 'relative',
-                            marginTop: '100px'
-                        }}
-                    >
-                        <p
-                            style={{
-                                fontSize: '48px',
-                                color: '#EEC13F',
-                                fontWeight: 'bold'
-                            }}
-                        >
-                            Create
-                        </p>
-                        <div>
-                            <div
-                                style={style.buttonContainer}
-                            >
-                                <Button
-                                    type={'function'}
-                                    style={{
-                                        ...style.button,
-                                        backgroundColor: tabSelect === 1 ? '#EEC13F' : 'transparent',
-                                        color: tabSelect === 1 ? '#000000' : '#ffffff'
-                                    }}
-                                    clickFunction={() => {
-                                        changeTab(1)
-                                    }}
-                                    text={'NFT'}
-                                />
-                                <Button
-                                    type={'function'}
-                                    style={{
-                                        ...style.button,
-                                        backgroundColor: tabSelect === 2 ? '#EEC13F' : 'transparent',
-                                        color: tabSelect === 2 ? '#000000' : '#ffffff'
-                                    }}
-                                    clickFunction={() => {
-                                        changeTab(2)
-                                    }}
-                                    text={'COLLECTION'}
-                                />
-                            </div>
-                            <div>
-                                {
-                                    tabSelect === 1 ? (
-                                        <NftCreate
-                                            account={account}
-                                            wrapSetAccount={wrapSetAccount}
-                                        />
-                                    ) : tabSelect === 2 && (
-                                        <CollectionCreate
-                                            account={account}
-                                            wrapSetAccount={wrapSetAccount}
-                                        />
-                                    )
-                                }
-                            </div>
-                        </div>
-                    </div>
-                ) : (
+                !account ? (
                     <div
                         style={{
                             height: '100vh',
@@ -117,6 +85,111 @@ const CreatePage = ({ account, wrapSetAccount }) => {
                         }}
                     >
                         <ConnectWalletPage
+                            wrapSetAccount={wrapSetAccount}
+                        />
+                    </div>
+                ) : tabSelect === 0 ? (
+                    <div
+                        style={{
+                            padding: '3em 20em',
+                            position: 'relative',
+                            marginTop: '100px',
+                            textAlign: 'center'
+                        }}
+                    >
+                        <p
+                            style={{
+                                fontSize: '24px',
+                                fontWeight: 'bold',
+                                marginBottom: '20px'
+                            }}
+                        >
+                            Upload item
+                        </p>
+                        <p
+                            style={{
+                                fontSize: '16px',
+                                marginBottom: '50px'
+                            }}
+                        >
+                            Choose “Single NFT” if you want your collectible to be one of a kind or “Collection” if
+                            <br />
+                            you want to be sell one collectible multiple times/
+                        </p>
+                        {
+                            <div
+                                style={{
+                                    display: 'grid',
+                                    gridTemplateColumns: '1fr 1fr',
+                                    gap: '70px'
+                                }}
+                            >
+                                <div>
+                                    <Image
+                                        src={singleNftImg}
+                                        preview={false}
+                                        width={'100%'}
+                                        style={{
+                                            borderRadius: '10px'
+                                        }}
+                                    />
+                                    <Button
+                                        type={'function'}
+                                        style={{
+                                            ...style.button,
+                                        }}
+                                        clickFunction={() => {
+                                            changeTab(1)
+                                        }}
+                                        text={'Single NFT'}
+                                    />
+                                </div>
+                                <div>
+                                    <Image
+                                        src={collectionImg}
+                                        preview={false}
+                                        width={'100%'}
+                                        style={{
+                                            borderRadius: '10px'
+                                        }}
+                                    />
+                                    <Button
+                                        type={'function'}
+                                        style={{
+                                            ...style.button,
+                                        }}
+                                        clickFunction={() => {
+                                            changeTab(2)
+                                        }}
+                                        text={'COLLECTION'}
+                                    />
+                                </div>
+                            </div>
+                        }
+                    </div>
+                ) : tabSelect === 1 ? (
+                    <div
+                        style={{
+                            marginTop: '100px',
+                            width: '40%',
+                            margin: '150px auto'
+                        }}
+                    >
+                        <NftCreate
+                            account={account}
+                            wrapSetAccount={wrapSetAccount}
+                        />
+                    </div>
+                ) : (
+                    <div
+                        style={{
+                            padding: '3em 20em',
+                            marginTop: '100px',
+                            width: '50%'
+                        }}
+                    >
+                        <CollectionCreate
+                            account={account}
                             wrapSetAccount={wrapSetAccount}
                         />
                     </div>

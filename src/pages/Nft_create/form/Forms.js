@@ -1,4 +1,4 @@
-import { Form, Input, Select } from "antd"
+import { Form, Input, Select, Image } from "antd"
 import { useEffect, useState } from "react";
 import { openNotification } from "../../../components/notifications/notification";
 import { mintCallFromUser } from '../../../anonejs/mintNft'
@@ -6,6 +6,9 @@ import { queryAllContracts, queryAllDataOfAllModels, queryCollectionAddressOfLau
 import Card from "../card/Card";
 import './Forms.css'
 import { openLoadingNotification } from "../../../components/notifications/notification";
+import noAvtImg from "../../../assets/img/no-avt-img.png";
+import Button from "../../../components/buttons/Button";
+import { Link } from "react-router-dom";
 
 const { TextArea } = Input;
 
@@ -53,6 +56,20 @@ const Forms = ({ account }) => {
             setModels([...res.all_models_info])
         })()
     }, [selectCollection])
+
+    const handleChangeImg = (e, type) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+                if (type === 'logo') {
+                    setImgUrlLogo(reader.result)
+                } else {
+                    setImgUrlBanner(reader.result)
+                }
+            }
+        }
+        reader.readAsDataURL(e.target.files[0]);
+    }
 
     const create = async (values) => {
         try {
@@ -111,11 +128,154 @@ const Forms = ({ account }) => {
                 onReset={reset}
                 onFinishFailed={submitFail}
                 layout="vertical"
+            ><p
+                style={{
+                    ...style.label,
+                    marginTop: '50px'
+                }}
             >
+                    Logo collection
+                </p>
+                <Form.Item
+                    name={'logo'}
+                    rules={[
+                        () => ({
+                            validator() {
+                                if (imgUrlLogo && imgUrlLogo !== '') {
+                                    return Promise.resolve()
+                                }
+                                return Promise.reject('Must upload an image')
+                            }
+                        }),
+                    ]}
+                    status="error"
+                >
+                    <input
+                        type='file'
+                        accept="image/png, image/jpeg, image/gif, image/jpg"
+                        id='input-logo'
+                        onChange={(e) => { handleChangeImg(e, 'logo') }}
+                        style={{
+                            display: 'none'
+                        }}
+                    />
+                    <div
+                        style={{
+                            aspectRatio: '1.5/1',
+                            width: '50%',
+                            backgroundColor: '#626262',
+                            borderRadius: '10px',
+                        }}
+                    >
+                        <label
+                            htmlFor="input-logo"
+                            className="logo"
+                        >
+                            <div
+                                style={{
+                                    width: '100%',
+                                    height: '100%',
+                                    display: 'flex',
+                                    borderRadius: '10px',
+                                    justifyContent: 'center',
+                                    textAlign: 'center',
+                                    backgroundColor: '#C4C4C4',
+                                    overflow: 'hidden'
+                                }}
+                            >
+                                {
+                                    !imgUrlLogo ? (
+                                        <Image
+                                            src={noAvtImg}
+                                            preview={false}
+                                            width={'20%'}
+                                            style={{
+                                                position: 'relative',
+                                                top: '35%',
+                                            }}
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={imgUrlLogo}
+                                            preview={false}
+                                            width={'100%'}
+                                            height={'100%'}
+                                            style={{
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    )
+                                }
+                            </div>
+                        </label>
+                    </div>
+                </Form.Item>
                 <p
                     style={{
                         ...style.label,
                         marginTop: '50px'
+                    }}
+                >
+                    Name collection
+                </p>
+                <p
+                    style={{
+                        ...style.label,
+                        fontSize: '10px',
+                    }}
+                >
+                    Max 80 characters long.
+                </p>
+                <Form.Item
+                    name={'name'}
+                    rules={[
+                        { required: true, message: 'Please input your collection name!' },
+                        { max: 80, message: 'Max 80 characters!' }
+                    ]}
+                >
+                    <Input
+                        placeholder="Collection name"
+                        style={{
+                            padding: '1em',
+                            borderRadius: '10px',
+                        }}
+                    />
+                </Form.Item>
+                <p
+                    style={{
+                        ...style.label,
+                        marginTop: '50px'
+                    }}
+                >
+                    Description
+                </p>
+                <p
+                    style={{
+                        ...style.label,
+                        fontSize: '10px',
+                    }}
+                >
+                    Add a description to your collection. This will appear on the collection page.
+                </p>
+                <Form.Item
+                    name={'description'}
+                    rules={[
+                        { required: true, message: 'Please input your collection description!' },
+                        { max: 2000, message: 'Max 2000 characters!' }
+                    ]}
+                >
+                    <TextArea rows={6}
+                        placeholder="Description"
+                        style={{
+                            padding: '1em',
+                            borderRadius: '10px',
+                        }}
+                    />
+                </Form.Item>
+                <p
+                    style={{
+                        ...style.label,
+                        marginTop: '50px',
                     }}
                 >
                     Collection
@@ -162,52 +322,6 @@ const Forms = ({ account }) => {
                         }
                     </Select>
                 </Form.Item>
-                <p
-                    style={{
-                        ...style.label,
-                        marginTop: '50px'
-                    }}
-                >
-                    Model
-                </p>
-                <p
-                    style={{
-                        ...style.label,
-                        fontSize: '10px',
-                    }}
-                >
-                    This is the model which your item will base in.
-                </p>
-                <Form.Item
-                    name={'model'}
-                    rules={[
-                        { required: true, message: 'Please select a model!' },
-                    ]}
-                >
-                    <Select
-                        placeholder='Select model'
-                        allowClear={true}
-                        style={{
-                            width: '100%',
-                        }}
-                    >
-                        {
-                            models.map(model => {
-                                return (
-                                    <Option
-                                        value={`${model.model_id}`}
-                                    >
-                                        <Card
-                                            addr={model}
-                                            type={'model'}
-                                            model={model}
-                                        />
-                                    </Option>
-                                )
-                            })
-                        }
-                    </Select>
-                </Form.Item>
                 {/* <p
                     style={{
                         ...style.label,
@@ -224,22 +338,48 @@ const Forms = ({ account }) => {
                 >
                     <Size wrapSetSize={wrapSetSize}/>
                 </Form.Item> */}
-                <div>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'start'
+                    }}
+                >
                     <button
                         htmlType="submit"
                         style={{
                             border: 0,
                             backgroundColor: '#EEC13F',
                             color: '#000000',
-                            fontSize: '24px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
                             marginTop: '50px',
-                            padding: '0.5em 2em',
-                            cursor: 'pointer'
+                            marginRight: '15px',
+                            padding: '1em 0',
+                            width: '20%',
+                            cursor: 'pointer',
+                            borderRadius: '10px'
                         }}
                     >
                         Create
                     </button>
+                    <Link
+                        to='/create'
+                        style={{
+                            border: 0,
+                            backgroundColor: '#EEC13F',
+                            color: '#000000',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            marginTop: '50px',
+                            padding: '1em 0',
+                            width: '20%',
+                            cursor: 'pointer',
+                            borderRadius: '10px',
+                            textAlign: 'center'
+                        }}
+                    >
+                        Back
+                    </Link>
                 </div>
             </Form>
         </div>

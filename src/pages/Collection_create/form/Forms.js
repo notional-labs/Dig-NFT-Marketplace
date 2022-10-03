@@ -3,7 +3,6 @@ import { useState } from "react";
 import { createCollection } from "../../../anonejs/createCollection";
 import { openNotification, openLoadingNotification } from "../../../components/notifications/notification";
 import { ipfsUpload } from "../../../anonejs/ipfsUpload";
-import noImg from "../../../assets/img/no_image.png";
 import noAvtImg from "../../../assets/img/no-avt-img.png";
 import "./Forms.css";
 
