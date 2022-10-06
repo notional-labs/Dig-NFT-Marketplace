@@ -11,7 +11,7 @@ import uploadImg from '../../../assets/img/upload.png'
 import addImg from '../../../assets/img/add-img.png'
 import Button from "../../../components/buttons/Button";
 import { TiDeleteOutline } from "react-icons/ti";
-import { PlusCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import { PlusCircleOutlined, CloseOutlined } from '@ant-design/icons'
 import Map from "./Map";
 import { Link } from "react-router-dom";
 
@@ -434,7 +434,7 @@ const Forms = ({ account }) => {
                                 >
                                     <Button
                                         type={'function'}
-                                        text={<CloseCircleOutlined />}
+                                        text={<CloseOutlined />}
                                         clickFunction={() => {
                                             let newImg = [...images]
                                             newImg.splice(i, 1)
@@ -447,7 +447,8 @@ const Forms = ({ account }) => {
                                             border: 0,
                                             borderRadius: '50%',
                                             cursor: 'pointer',
-                                            zIndex: 2
+                                            zIndex: 2,
+                                            aspectRatio: '1/1'
                                         }}
                                     />
                                     <input
@@ -526,7 +527,8 @@ const Forms = ({ account }) => {
                                             borderRadius: '50%',
                                             cursor: 'pointer',
                                             backgroundColor: 'transparent',
-                                            zIndex: 2
+                                            zIndex: 2,
+                                            aspectRatio: '1/1'
                                         }}
                                     />
                                 <Button

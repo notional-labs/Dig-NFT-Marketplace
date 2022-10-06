@@ -433,41 +433,6 @@ const Forms = ({ account }) => {
                         }}
                     />
                 </Form.Item>
-                <p
-                    style={{
-                        ...style.label,
-                        marginTop: '30px'
-                    }}
-                >
-                    Limit per address
-                </p>
-                <p
-                    style={{
-                        ...style.label,
-                        fontSize: '10px',
-                    }}
-                >
-                    Mint limit per address
-                </p>
-                <Form.Item
-                    name={'limit'}
-                    rules={[
-                        { required: true, message: 'Please input a number!' },
-                    ]}
-                >
-                    <InputNumber
-                        placeholder="limit per address"
-                        min={0}
-                        max={50}
-                        step={1}
-                        style={{
-                            padding: '.25em',
-                            width: '20%',
-                            fontSize: '20px',
-                            borderRadius: '10px'
-                        }}
-                    />
-                </Form.Item>
                 <div
                     style={{
                         display: 'flex',
@@ -507,7 +472,37 @@ const Forms = ({ account }) => {
                         />
                     </Form.Item>
                 </div>
-                
+                <p
+                    style={{
+                        ...style.label,
+                        marginTop: '30px'
+                    }}
+                >
+                    Receive address
+                </p>
+                <Form.Item
+                    name={'royaltyPaymentAddress'}
+                    rules={[
+                        () => ({
+                            validator() {
+                                if (paymentAddr !== '') {
+                                    return Promise.resolve()
+                                }
+                                return Promise.reject('Please input payment address!')
+                            }
+                        }),
+                    ]}
+                >
+                    <Input
+                        placeholder="Royalty payment address"
+                        defaultValue={JSON.parse(account).account.address}
+                        onChange={handleChangeAddress}
+                        style={{
+                            padding: '1em',
+                            borderRadius: '10px'
+                        }}
+                    />
+                </Form.Item>
                 <p
                     style={{
                         ...style.label,
