@@ -4,7 +4,8 @@ import Image from 'rc-image';
 import background from './assets/img/background.jpeg'
 import {
   Routes,
-  Route} from "react-router-dom";
+  Route
+} from "react-router-dom";
 import Profile from './pages/Profile/Index';
 import NftProfile from './pages/Nft_profile/Index';
 import NftMarketplace from './pages/Nft_market_place/Index';
@@ -13,6 +14,9 @@ import CreatePage from './pages/Create/Index';
 import EditPage from './pages/Edit/Index';
 import { useState, useEffect, useCallback } from 'react';
 import CollectionEdit from './pages/Collection_edit/Index';
+import NftCreate from './pages/Nft_create/Index';
+import CollectionCreate from './pages/Collection_create/Index';
+import ModelCreate from './pages/Model_create/Index';
 
 function App() {
   const [account, setAccount] = useState(localStorage.getItem('account'))
@@ -57,12 +61,30 @@ function App() {
           account={account}
           wrapSetAccount={wrapSetAccount}
         />} />
+        <Route exact path="/user/collection/" element={<Profile
+          type={'user-profile'}
+          isCollection={true}
+          account={account}
+          wrapSetAccount={wrapSetAccount}
+        />} />
         <Route exact path="/profile/:id" element={<Profile
           type={'profile'}
           account={account}
           wrapSetAccount={wrapSetAccount}
         />} />
         <Route exact path="/create" element={<CreatePage
+          account={account}
+          wrapSetAccount={wrapSetAccount}
+        />} />
+        <Route exact path="/item/create" element={<ModelCreate
+          account={account}
+          wrapSetAccount={wrapSetAccount}
+        />} />
+        <Route exact path="/nft/create" element={<NftCreate
+          account={account}
+          wrapSetAccount={wrapSetAccount}
+        />} />
+        <Route exact path="/collection/create" element={<CollectionCreate
           account={account}
           wrapSetAccount={wrapSetAccount}
         />} />

@@ -19,7 +19,7 @@ const style = {
     }
 }
 
-const Banner = ({ user, type, id, info }) => {
+const Banner = ({ user, type, id, info, isCollection }) => {
     console.log(info)
     return (
         <div>
@@ -164,6 +164,7 @@ const Banner = ({ user, type, id, info }) => {
                         id={id}
                         info={info}
                         type={type}
+                        isCollection={isCollection}
                     />
                 </div>
             </div>

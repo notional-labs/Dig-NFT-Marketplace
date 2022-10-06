@@ -3,6 +3,7 @@ import NftList from "../nft/NftList"
 import Collection from "../collection/Collection"
 import Button from "../../../components/buttons/Button"
 import DemoNftList from "../nft/DemoNftList"
+import { PlusCircleOutlined } from '@ant-design/icons'
 
 
 const style = {
@@ -29,7 +30,7 @@ const style = {
     }
 }
 
-const Asset = ({ info, type, id }) => {
+const Asset = ({ info, type, id, isCollection }) => {
     const [tabSelect, setTabSelect] = useState(1)
 
     useEffect(() => {
@@ -47,35 +48,43 @@ const Asset = ({ info, type, id }) => {
             <div
                 style={style.buttonContainer}
             >
-                <Button
-                    type={'function'}
-                    style={{
-                        ...style.button,
-                        backgroundColor: tabSelect === 1 ? '#EEC13F' : '#D9D9D9',
-                        color: '#000000',
-                        borderRadius: '30px',
-                        marginRight: '10px'
-                    }}
-                    clickFunction={() => {
-                        changeTab(1)
-                    }}
-                    text={'NFT'}
-                />
                 {
-                    type !== 'collection' && (
-                        <Button
-                            type={'function'}
-                            style={{
-                                ...style.button,
-                                backgroundColor: tabSelect === 2 ? '#EEC13F' : '#D9D9D9',
-                                color: '#000000',
-                                borderRadius: '30px'
-                            }}
-                            clickFunction={() => {
-                                changeTab(2)
-                            }}
-                            text={'COLLECTIONS'}
-                        />
+                    type !== 'collection' && isCollection ? (
+                        <div>
+                            <Button
+                                type={'link'}
+                                style={{
+                                    ...style.button,
+                                    width: '15em',
+                                    borderRadius: '10px',
+                                    backgroundColor: '#EEC13F',
+                                    color: '#000000',
+                                }}
+                                url={'/collection/create'}
+                                text={(
+                                    <div>
+                                        <PlusCircleOutlined /> Create a collection
+                                    </div>
+                                )}
+                            />
+                        </div>
+                    ) : (
+                        <>
+                            <Button
+                                type={'function'}
+                                style={{
+                                    ...style.button,
+                                    backgroundColor: tabSelect === 1 ? '#EEC13F' : '#D9D9D9',
+                                    color: '#000000',
+                                    borderRadius: '30px',
+                                    marginRight: '10px'
+                                }}
+                                clickFunction={() => {
+                                    changeTab(1)
+                                }}
+                                text={'NFT'}
+                            />
+                        </>
                     )
                 }
             </div>
@@ -83,15 +92,15 @@ const Asset = ({ info, type, id }) => {
                 style={style.grid}
             >
                 {
-                    tabSelect === 1 ? (
+                    isCollection ? (
                         // <NftList
                         //     info={info}
                         //     id={id}
                         //     type={type}
                         // />
-                        <DemoNftList/>
-                    ) : (
                         <Collection />
+                    ) : (
+                        <DemoNftList />
                     )
                 }
             </div>

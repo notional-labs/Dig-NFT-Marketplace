@@ -6,6 +6,8 @@ import { getBalance } from '../../../utils/user/getBalance'
 import './MenuButton.css'
 import { MdOutlineAccountCircle, MdLogout } from "react-icons/md";
 import { FiSettings } from "react-icons/fi";
+import { BsCollection } from 'react-icons/bs'
+
 
 const style = {
     button: {
@@ -25,9 +27,13 @@ const buttonType = [
         text: 'Profile',
     },
     {
+        logo: <BsCollection />,
+        text: 'Collection',
+    },
+    {
         logo: <FiSettings />,
         text: 'Settings'
-    }, 
+    },
     {
         logo: <MdLogout />,
         text: 'Logout'
@@ -170,6 +176,26 @@ const MenuButton = ({ account, wrapSetAccount, pathname }) => {
 
                                     }}
                                     text={getButtonText(1)}
+                                    type={'href'}
+                                    url={`${process.env.REACT_APP_HOST}/user/collection/`}
+                                />
+                            </div>
+                            <div
+                                className="upper-button"
+                            >
+                                <Button
+                                    style={{
+                                        border: 0,
+                                        backgroundColor: 'transparent',
+                                        color: '#ffffff',
+                                        fontWeight: 'bold',
+                                        cursor: 'pointer',
+                                        width: '100%',
+                                        padding: '.5em 1em',
+                                        fontSize: '1rem'
+
+                                    }}
+                                    text={getButtonText(2)}
                                     type={'link'}
                                     url={`/user/edit`}
                                 />
@@ -191,7 +217,7 @@ const MenuButton = ({ account, wrapSetAccount, pathname }) => {
                                     }}
                                     clickFunction={logout}
                                     text={
-                                        getButtonText(2)
+                                        getButtonText(3)
                                     }
                                 />
                             </div>

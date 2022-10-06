@@ -18,7 +18,7 @@ const style = {
     }
 }
 
-const Profile = ({ type, account, wrapSetAccount }) => {
+const Profile = ({ type, account, wrapSetAccount, isCollection }) => {
     const [info, setInfo] = useState(null)
     let { id } = useParams();
 
@@ -81,6 +81,7 @@ const Profile = ({ type, account, wrapSetAccount }) => {
                                         type={type}
                                         id={id}
                                         info={info}
+                                        isCollection={isCollection}
                                     />
                                 ) : (
                                     <Banner
@@ -88,6 +89,7 @@ const Profile = ({ type, account, wrapSetAccount }) => {
                                         type={type}
                                         id={id}
                                         info={info}
+                                        isCollection={isCollection}
                                     />
                                 ) : (
                                     <CollectionBanner

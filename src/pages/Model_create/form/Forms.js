@@ -1,21 +1,27 @@
-import { Form, Input, Image, Select } from "antd";
+import { Form, Input, Select, Image, InputNumber } from "antd"
 import { useEffect, useState } from "react";
-import { openNotification, openLoadingNotification, } from "../../../components/notifications/notification";
-import { ipfsUpload } from "../../../anonejs/ipfsUpload";
-import noImg from "../../../assets/img/no_image.png";
-import { createModel } from "../../../anonejs/createModel";
-import { queryNumberOfModels, queryCollectionAddressOfLaunchpad, queryAllContracts } from "../../../anonejs/queryInfo";
-import CollectionCard from "../collection_card/CollectionCard";
+import { openNotification } from "../../../components/notifications/notification";
+import { mintCallFromUser } from '../../../anonejs/mintNft'
+import { queryAllContracts, queryAllDataOfAllModels, queryCollectionAddressOfLaunchpad } from "../../../anonejs/queryInfo";
+import Card from "../card/Card";
+import './Forms.css'
+import { openLoadingNotification } from "../../../components/notifications/notification";
+import noAvtImg from "../../../assets/img/no-avt-img.png";
+import uploadImg from '../../../assets/img/upload.png'
+import addImg from '../../../assets/img/add-img.png'
 import Button from "../../../components/buttons/Button";
-import { PlusCircleOutlined } from '@ant-design/icons'
 import { TiDeleteOutline } from "react-icons/ti";
+import { PlusCircleOutlined, CloseCircleOutlined } from '@ant-design/icons'
+import Map from "./Map";
+import { Link } from "react-router-dom";
 
 const { TextArea } = Input;
+
 const { Option } = Select;
 
 const style = {
     container: {
-        marginTop: '50px',
+        position: 'relative',
     },
     title: {
         fontSize: '48px',
@@ -26,42 +32,33 @@ const style = {
         color: '#F2F1F1',
         fontSize: '24px',
         marginBottom: 0,
-        fontWeight: 'bold',
+        fontWeight: 'bold'
+    },
+    propertiesText: {
+        margin: 0
     },
     input: {
         marign: '10px',
         padding: '1em',
-        width: '97%'
+        borderRadius: '10px'
     },
-    propertiesText: {
-        margin: 0
-    }
 }
 
-const makeTextFile = (obj) => {
-    let textFile = null
-    const data = new Blob([obj], { type: 'text/json' });
-
-    // If we are replacing a previously generated file we need to
-    // manually revoke the object URL to avoid memory leaks.
-    if (textFile !== null) {
-        window.URL.revokeObjectURL(textFile);
-    }
-
-    textFile = window.URL.createObjectURL(data);
-
-    // returns a URL you can use as a href
-    return textFile;
-};
-
-const Forms = ({ }) => {
+const Forms = ({ account }) => {
     const [form] = Form.useForm()
+    const [loading, setLoading] = useState(false)
     const [imgUrlLogo, setImgUrlLogo] = useState('')
-    const [collections, setCollections] = useState([])
+    const [cordinate, setCordinate] = useState({
+        lat: '',
+        long: ''
+    })
     const [properties, setProperties] = useState([{
         trait_type: '',
         value: ''
     }])
+    const [images, setImages] = useState([])
+    const [collections, setCollections] = useState([])
+    const [selectCollection, setSelectCollection] = useState('')
 
     useEffect(() => {
         (async () => {
@@ -70,44 +67,47 @@ const Forms = ({ }) => {
         })()
     }, [])
 
-    useEffect(() => {
-        console.log(properties)
-    }, [properties])
+    const handleChangeImg = (e, type, index = 0) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            if (reader.readyState === 2) {
+                if (type === 'logo') {
+                    setImgUrlLogo(reader.result)
+                } else if (type === 'gallery') {
+                    let newImgs = images.map((img, i) => {
+                        return i === index ? reader.result : img
+                    })
+                    setImages([...newImgs])
+                }
+            }
+        }
+        reader.readAsDataURL(e.target.files[0]);
+    }
 
     const create = async (values) => {
         try {
+            setLoading(true)
             openLoadingNotification('open')
-            const logo = imgUrlLogo !== '' ? await ipfsUpload(imgUrlLogo) : ''
             let config = {
                 ...values,
-                logo: logo,
+                address: JSON.parse(account).account.address
             }
-            const metaData = {
-                attributes: [...properties.filter(x => x.trait_type !== '' || x.value !== '')],
-                description: config.description,
-                image: config.logo,
-                name: config.name
-            }
-            const contractAddr = await queryCollectionAddressOfLaunchpad(config.collection)
-            const numOfModel = await queryNumberOfModels(contractAddr)
-            const filePath = makeTextFile(JSON.stringify(metaData))
-            const ipfsPath = await ipfsUpload(filePath)
-
-            const contractConfig = {
+            const mintConfig = {
+                size: '38',
                 minterContract: config.collection,
-                modelId: `${numOfModel}`,
-                modelUri: ipfsPath
+                modelId: config.model,
+                address: config.address
             }
-
-            await createModel(contractConfig)
+            await mintCallFromUser(mintConfig)
             openLoadingNotification('close')
             openNotification('success', 'Submit successfully')
             reset()
         }
         catch (e) {
             openLoadingNotification('close')
-            openNotification('error', e.message)
             console.log(e.message)
+            openNotification('error', e.message)
+            reset()
         }
     }
 
@@ -118,16 +118,6 @@ const Forms = ({ }) => {
     const reset = () => {
         form.resetFields()
         setImgUrlLogo('')
-    }
-
-    const handleChange = (e) => {
-        const reader = new FileReader();
-        reader.onload = () => {
-            if (reader.readyState === 2) {
-                setImgUrlLogo(reader.result)
-            }
-        }
-        reader.readAsDataURL(e.target.files[0]);
     }
 
     const handleRemoveProperty = (index) => {
@@ -147,8 +137,20 @@ const Forms = ({ }) => {
         setProperties([...propList])
     }
 
+    // const handleChange = (e, type) => {
+    //     const reader = new FileReader();
+    //     reader.onload = () => {
+    //         if (reader.readyState === 2) {
+    //             type === 'logo' ? setImgUrlLogo(reader.result) : setImgUrlBanner(reader.result)
+    //         }
+    //     }
+    //     reader.readAsDataURL(e.target.files[0]);
+    // };
+
     return (
-        <div style={style.container}>
+        <div
+            style={style.container}
+        >
             <Form
                 form={form}
                 onFinish={create}
@@ -157,16 +159,19 @@ const Forms = ({ }) => {
                 layout="vertical"
             >
                 <p
-                    style={style.label}
+                    style={{
+                        ...style.label,
+                        marginTop: '30px'
+                    }}
                 >
-                    Logo model
+                    Background Image
                 </p>
                 <Form.Item
                     name={'logo'}
                     rules={[
                         () => ({
                             validator() {
-                                if (imgUrlLogo && imgUrlLogo !== '') {
+                                if (imgUrlLogo !== '') {
                                     return Promise.resolve()
                                 }
                                 return Promise.reject('Must upload an image')
@@ -177,42 +182,70 @@ const Forms = ({ }) => {
                     <input
                         type='file'
                         accept="image/png, image/jpeg, image/gif, image/jpg"
-                        id='input-logo-model'
-                        onChange={(e) => handleChange(e)}
+                        id='input-logo'
+                        onChange={(e) => { handleChangeImg(e, 'logo') }}
                         style={{
-                            display: 'none',
+                            display: 'none'
                         }}
                     />
                     <div
                         style={{
-                            width: '40%',
-                            backgroundColor: 'gray',
-                            borderRadius: '10px'
+                            aspectRatio: '1.5/1',
+                            width: '50%',
+                            backgroundColor: '#626262',
+                            borderRadius: '10px',
                         }}
                     >
                         <label
-                            htmlFor="input-logo-model"
+                            htmlFor="input-logo"
                             className="logo"
                         >
-                            <Image
-                                src={imgUrlLogo || noImg}
-                                preview={false}
-                                width={'100%'}
+                            <div
                                 style={{
-                                    aspectRatio: '1.5/1',
-                                    borderRadius: '10px'
+                                    width: '100%',
+                                    height: '100%',
+                                    display: 'flex',
+                                    borderRadius: '10px',
+                                    justifyContent: 'center',
+                                    textAlign: 'center',
+                                    backgroundColor: '#C4C4C4',
+                                    overflow: 'hidden'
                                 }}
-                            />
+                            >
+                                {
+                                    !imgUrlLogo ? (
+                                        <Image
+                                            src={noAvtImg}
+                                            preview={false}
+                                            width={'20%'}
+                                            style={{
+                                                position: 'relative',
+                                                top: '35%',
+                                            }}
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={imgUrlLogo}
+                                            preview={false}
+                                            width={'100%'}
+                                            height={'100%'}
+                                            style={{
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    )
+                                }
+                            </div>
                         </label>
                     </div>
                 </Form.Item>
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
-                    Name model
+                    Name
                 </p>
                 <p
                     style={{
@@ -225,21 +258,22 @@ const Forms = ({ }) => {
                 <Form.Item
                     name={'name'}
                     rules={[
-                        { required: true, message: 'Please input your model name!' },
+                        { required: true, message: 'Please input your collection name!' },
                         { max: 80, message: 'Max 80 characters!' }
                     ]}
                 >
                     <Input
-                        placeholder="Model name"
+                        placeholder="NFT name"
                         style={{
-                            padding: '1em'
+                            padding: '1em',
+                            borderRadius: '10px',
                         }}
                     />
                 </Form.Item>
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
                     Description
@@ -250,29 +284,39 @@ const Forms = ({ }) => {
                         fontSize: '10px',
                     }}
                 >
-                    Add a description to the model.
+                    Add a description to your collection. This will appear on the collection page.
                 </p>
                 <Form.Item
                     name={'description'}
                     rules={[
-                        { required: true, message: 'Please input your model description!' },
+                        { required: true, message: 'Please input your collection description!' },
                         { max: 2000, message: 'Max 2000 characters!' }
                     ]}
                 >
                     <TextArea rows={6}
                         placeholder="Description"
                         style={{
-                            padding: '1em'
+                            padding: '1em',
+                            borderRadius: '10px',
                         }}
                     />
                 </Form.Item>
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
-                    Properties
+                    Location
+                </p>
+                <p
+                    style={{
+                        ...style.label,
+                        fontSize: '16px',
+                        marginTop: '10px'
+                    }}
+                >
+                    Cordinate ( {cordinate.lat} : {cordinate.long} )
                 </p>
                 <p
                     style={{
@@ -280,27 +324,317 @@ const Forms = ({ }) => {
                         fontSize: '10px',
                     }}
                 >
-                    Properties show up underneath your item. Each model can have upto 10 Properties
+                    Latitude and Longitude of the property
+                </p>
+                <Map
+                    wrapSetCordinate={(lat, long) => {
+                        setCordinate({
+                            lat,
+                            long
+                        })
+                    }}
+                />
+                <div
+                    style={{
+                        display: 'grid',
+                        gridTemplateColumns: '1fr 1fr',
+                        gap: '30px'
+                    }}
+                >
+                    <div>
+                        <p
+                            style={{
+                                ...style.label,
+                                marginTop: '30px'
+                            }}
+                        >
+                            Land Area (m2)
+                        </p>
+                        <Form.Item
+                            name={'landArea'}
+                            rules={[
+                                { required: true, message: 'Please input land area!' },
+                            ]}
+                        >
+                            <InputNumber
+                                placeholder="Land area"
+                                style={{
+                                    padding: '1em',
+                                    borderRadius: '10px',
+                                    width: '100%'
+                                }}
+                                min={0}
+                            />
+                        </Form.Item>
+                    </div>
+                    <div>
+                        <p
+                            style={{
+                                ...style.label,
+                                marginTop: '30px'
+                            }}
+                        >
+                            Construction Area (m2)
+                        </p>
+                        <Form.Item
+                            name={'constructionArea'}
+                            rules={[
+                                { required: true, message: 'Please input construction area!' },
+                                ({ getFieldValue }) => ({
+                                    validator(_, value) {
+                                        if (!value || getFieldValue("landArea") >= value) {
+                                            return Promise.resolve()
+                                        }
+                                        return Promise.reject('Construction area must be smaller than land area')
+                                    }
+                                }),
+
+                            ]}
+                        >
+                            <InputNumber
+                                placeholder="Construction area"
+                                style={{
+                                    padding: '1em',
+                                    borderRadius: '10px',
+                                    width: '100%'
+                                }}
+                                min={0}
+                            />
+                        </Form.Item>
+                    </div>
+                </div>
+                <p
+                    style={{
+                        ...style.label,
+                        marginTop: '30px',
+                    }}
+                >
+                    Image Gallery
+                </p>
+                <p
+                    style={{
+                        ...style.label,
+                        fontSize: '10px',
+                    }}
+                >
+                    Max 30 Image
                 </p>
                 <div
                     style={{
-                        display: 'flex',
-                        justifyContent: 'start',
-                        flexDirection: 'column'
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(5, 1fr)',
+                        gap: '20px'
                     }}
+                >
+                    {
+                        images.map((img, i) => {
+                            return (
+                                <div
+                                    key={i}
+                                >
+                                    <Button
+                                        type={'function'}
+                                        text={<CloseCircleOutlined />}
+                                        clickFunction={() => {
+                                            let newImg = [...images]
+                                            newImg.splice(i, 1)
+                                            setImages([...newImg])
+                                        }}
+                                        style={{
+                                            position: 'relative',
+                                            left: '90%',
+                                            top: '15px',
+                                            border: 0,
+                                            borderRadius: '50%',
+                                            cursor: 'pointer',
+                                            zIndex: 2
+                                        }}
+                                    />
+                                    <input
+                                        type='file'
+                                        accept="image/png, image/jpeg, image/gif, image/jpg"
+                                        id={`input-gallery-${i}`}
+                                        onChange={(e) => { handleChangeImg(e, 'gallery', i) }}
+                                        style={{
+                                            display: 'none'
+                                        }}
+                                    />
+                                    <div
+                                        style={{
+                                            aspectRatio: '1/1',
+                                            width: '100%',
+                                            backgroundColor: '#626262',
+                                            borderRadius: '10px',
+                                        }}
+                                    >
+                                        <label
+                                            htmlFor={`input-gallery-${i}`}
+                                            className="logo"
+                                        >
+                                            <div
+                                                style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    display: 'flex',
+                                                    borderRadius: '10px',
+                                                    justifyContent: 'center',
+                                                    textAlign: 'center',
+                                                    backgroundColor: '#C4C4C4',
+                                                    overflow: 'hidden'
+                                                }}
+                                            >
+                                                {
+                                                    !img ? (
+                                                        <Image
+                                                            src={uploadImg}
+                                                            preview={false}
+                                                            width={'30%'}
+                                                            style={{
+                                                                position: 'relative',
+                                                                top: '40%',
+                                                            }}
+                                                        />
+                                                    ) : (
+                                                        <Image
+                                                            src={img}
+                                                            preview={false}
+                                                            width={'100%'}
+                                                            height={'100%'}
+                                                            style={{
+                                                                objectFit: 'cover'
+                                                            }}
+                                                        />
+                                                    )
+                                                }
+                                            </div>
+                                        </label>
+                                    </div>
+                                </div>
+                            )
+                        })
+                    }
+                    {
+                        images.length < 30 && (
+                            <div>
+                                <Button
+                                        type={'function'}
+                                        style={{
+                                            position: 'relative',
+                                            left: '90%',
+                                            top: '15px',
+                                            border: 0,
+                                            borderRadius: '50%',
+                                            cursor: 'pointer',
+                                            backgroundColor: 'transparent',
+                                            zIndex: 2
+                                        }}
+                                    />
+                                <Button
+                                    type={'function'}
+                                    text={<Image
+                                        src={addImg}
+                                        preview={false}
+                                        width={'30%'}
+                                    />}
+                                    clickFunction={() => {
+                                        setImages(['', ...images])
+                                    }}
+                                    style={{
+                                        border: 'dashed 1px #EEC13F',
+                                        borderRadius: '10px',
+                                        backgroundColor: 'transparent',
+                                        width: '100%',
+                                        aspectRatio: '1/1',
+                                        height: '100%',
+                                        cursor: 'pointer'
+                                    }}
+                                />
+                            </div>
+                        )
+                    }
+                </div>
+                <p
+                    style={{
+                        ...style.label,
+                        marginTop: '30px',
+                    }}
+                >
+                    Collection
+                </p>
+                <p
+                    style={{
+                        ...style.label,
+                        fontSize: '10px',
+                    }}
+                >
+                    This is the collection where your item will appear.
+                </p>
+                <Form.Item
+                    name={'collection'}
+                    rules={[
+                        { required: true, message: 'Please select a collection!' },
+                    ]}
+                    preserve={false}
+                >
+                    <Select
+                        placeholder='Select Collection'
+                        allowClear={true}
+                        style={{
+                            width: '100%',
+                            borderRadius: '10px',
+                        }}
+                        onSelect={(val) => {
+                            setSelectCollection(val)
+                        }}
+                        autoClearSearchValue={true}
+                    >
+                        {
+                            collections.map(collection => {
+                                return (
+                                    <Option
+                                        value={`${collection}`}
+                                    >
+                                        <Card
+                                            addr={collection}
+                                            type={'collection'}
+                                        />
+                                    </Option>
+                                )
+                            })
+                        }
+                    </Select>
+                </Form.Item>
+                <p
+                    style={{
+                        ...style.label,
+                        marginTop: '30px'
+                    }}
+                >
+                    Attributes
+                </p>
+                <p
+                    style={{
+                        ...style.label,
+                        fontSize: '10px',
+                    }}
+                >
+                    Properties show up underneath your item. Each nft can have upto 10 Properties
+                </p>
+                <div
+
                 >
                     <div
                         style={{
                             display: 'flex',
                             justifyContent: 'space-between',
-                            width: '60%',
+                            width: '100%',
                             color: '#ffffff',
                             fontSize: '1.2rem'
                         }}
                     >
                         <div
                             style={{
-                                width: '95%'
+                                width: '100%'
                             }}
                         >
                             <p
@@ -308,13 +642,13 @@ const Forms = ({ }) => {
                                     style.propertiesText
                                 }
                             >
-                                Type
+                                Property
                             </p>
                         </div>
                         <div
                             style={{
-                                width: '95%',
-                                textAlign: 'end'
+                                width: '100%',
+                                textAlign: 'start'
                             }}
                         >
                             <p
@@ -339,27 +673,29 @@ const Forms = ({ }) => {
                                 >
                                     <div
                                         style={{
-                                            display: 'flex',
-                                            justifyContent: 'space-between',
-                                            width: '60%',
+                                            width: '100%',
+                                            display: 'grid',
+                                            gridTemplateColumns: '1fr 1fr',
+                                            gap: '10px',
                                             marginTop: '10px'
                                         }}
                                     >
                                         <div
                                             style={{
-                                                width: '95%'
+                                                width: '100%',
+                                                marginRight: '10px'
                                             }}
                                         >
                                             <Input
                                                 style={style.input}
-                                                placeholder='Type'
+                                                placeholder='Name'
                                                 onChange={(e) => onChange(e, index, 'type')}
                                                 value={property.trait_type}
                                             />
                                         </div>
                                         <div
                                             style={{
-                                                width: '95%',
+                                                width: '100%',
                                                 textAlign: 'end'
                                             }}
                                         >
@@ -388,7 +724,7 @@ const Forms = ({ }) => {
                                                     color: '#ffffff',
                                                     fontSize: '2rem',
                                                     position: 'relative',
-                                                    top: '15%',
+                                                    top: '20%',
                                                 }}
                                             />
                                         )
@@ -413,9 +749,10 @@ const Forms = ({ }) => {
                             </div>
                         )}
                         style={{
-                            width: '60%',
-                            border: 'solid 1px #EEC13F',
-                            color: '#EEC13F',
+                            width: '30%',
+                            border: 'solid 1px #ED9D26',
+                            borderRadius: '10px',
+                            color: '#ED9D26',
                             backgroundColor: 'transparent',
                             fontSize: '20px',
                             padding: '.5em',
@@ -427,10 +764,10 @@ const Forms = ({ }) => {
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
-                    Collection
+                    Supply per address
                 </p>
                 <p
                     style={{
@@ -438,56 +775,73 @@ const Forms = ({ }) => {
                         fontSize: '10px',
                     }}
                 >
-                    This is the collection where your nfts will appear.
+                    The number of items that can be minted.
                 </p>
                 <Form.Item
-                    name={'collection'}
+                    name={'limit'}
                     rules={[
-                        { required: true, message: 'Please select a collection!' },
+                        { required: true, message: 'Please input a number!' },
                     ]}
                 >
-                    <Select
-                        placeholder='Select Collection'
-                        allowClear={true}
+                    <InputNumber
+                        placeholder="limit per address"
+                        min={0}
+                        max={50}
+                        step={1}
                         style={{
+                            padding: '.5em',
                             width: '100%',
+                            fontSize: '20px',
+                            borderRadius: '10px'
                         }}
-                    >
-                        {
-                            collections.map(collection => {
-                                return (
-                                    <Option
-                                        value={`${collection}`}
-                                    >
-                                        <CollectionCard
-                                            addr={collection}
-                                        />
-                                    </Option>
-                                )
-                            })
-                        }
-                    </Select>
+                    />
                 </Form.Item>
-                <div>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'start'
+                    }}
+                >
                     <button
-                        htmltype="submit"
+                        htmlType="submit"
                         style={{
                             border: 0,
                             backgroundColor: '#EEC13F',
                             color: '#000000',
-                            fontSize: '24px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
-                            marginTop: '50px',
-                            padding: '0.5em 2em',
-                            cursor: 'pointer'
+                            marginTop: '30px',
+                            marginRight: '15px',
+                            padding: '1em 0',
+                            width: '20%',
+                            cursor: 'pointer',
+                            borderRadius: '10px'
                         }}
                     >
                         Create
                     </button>
+                    <Link
+                        to='/create'
+                        style={{
+                            border: 0,
+                            backgroundColor: '#EEC13F',
+                            color: '#000000',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            marginTop: '30px',
+                            padding: '1em 0',
+                            width: '20%',
+                            cursor: 'pointer',
+                            borderRadius: '10px',
+                            textAlign: 'center'
+                        }}
+                    >
+                        Back
+                    </Link>
                 </div>
-            </Form >
-        </div >
-    );
+            </Form>
+        </div>
+    )
 }
 
 export default Forms

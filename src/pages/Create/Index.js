@@ -35,34 +35,6 @@ const style = {
 }
 
 const CreatePage = ({ account, wrapSetAccount }) => {
-    const [tabSelect, setTabSelect] = useState(0)
-
-    const returnButton = (
-        <div>
-            <Button
-                type={'function'}
-                style={{
-                    border: 'none',
-                    fontSize: '16px',
-                    fontWeight: 'bold',
-                    cursor: 'pointer',
-                    borderRadius: '10px',
-                    padding: '1em 0',
-                    backgroundColor: '#EEC13F',
-                    color: 'black',
-                    width: '10%'
-                }}
-                clickFunction={() => {
-                    changeTab(0)
-                }}
-                text={'Back'}
-            />
-        </div>
-    )
-
-    const changeTab = (value) => {
-        setTabSelect(value)
-    }
 
     return (
         <div
@@ -88,7 +60,7 @@ const CreatePage = ({ account, wrapSetAccount }) => {
                             wrapSetAccount={wrapSetAccount}
                         />
                     </div>
-                ) : tabSelect === 0 ? (
+                ) : (
                     <div
                         style={{
                             padding: '3em 20em',
@@ -134,14 +106,13 @@ const CreatePage = ({ account, wrapSetAccount }) => {
                                         }}
                                     />
                                     <Button
-                                        type={'function'}
+                                        type={'link'}
+                                        url={'/nft/create'}
                                         style={{
                                             ...style.button,
                                         }}
-                                        clickFunction={() => {
-                                            changeTab(1)
-                                        }}
                                         text={'Single NFT'}
+
                                     />
                                 </div>
                                 <div>
@@ -154,44 +125,16 @@ const CreatePage = ({ account, wrapSetAccount }) => {
                                         }}
                                     />
                                     <Button
-                                        type={'function'}
+                                        type={'link'}
+                                        url={'/item/create'}
                                         style={{
                                             ...style.button,
                                         }}
-                                        clickFunction={() => {
-                                            changeTab(2)
-                                        }}
-                                        text={'COLLECTION'}
+                                        text={'Real estate'}
                                     />
                                 </div>
                             </div>
                         }
-                    </div>
-                ) : tabSelect === 1 ? (
-                    <div
-                        style={{
-                            marginTop: '100px',
-                            width: '40%',
-                            margin: '150px auto'
-                        }}
-                    >
-                        <NftCreate
-                            account={account}
-                            wrapSetAccount={wrapSetAccount}
-                        />
-                    </div>
-                ) : (
-                    <div
-                        style={{
-                            padding: '3em 20em',
-                            marginTop: '100px',
-                            width: '50%'
-                        }}
-                    >
-                        <CollectionCreate
-                            account={account}
-                            wrapSetAccount={wrapSetAccount}
-                        />
                     </div>
                 )
             }

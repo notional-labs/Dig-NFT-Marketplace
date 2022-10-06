@@ -1,9 +1,10 @@
-import { Form, Input, Slider, InputNumber, Image } from "antd"
+import { Form, Input, Slider, InputNumber, Image, Switch } from "antd"
 import { useState } from "react";
 import { createCollection } from "../../../anonejs/createCollection";
 import { openNotification, openLoadingNotification } from "../../../components/notifications/notification";
 import { ipfsUpload } from "../../../anonejs/ipfsUpload";
 import noAvtImg from "../../../assets/img/no-avt-img.png";
+import { Link } from "react-router-dom";
 import "./Forms.css";
 
 const { TextArea } = Input;
@@ -167,7 +168,7 @@ const Forms = ({ account }) => {
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
                     Logo collection
@@ -215,18 +216,33 @@ const Forms = ({ account }) => {
                                     borderRadius: '50%',
                                     justifyContent: 'center',
                                     textAlign: 'center',
-                                    backgroundColor: '#C4C4C4'
+                                    backgroundColor: '#C4C4C4',
+                                    overflow: 'hidden'
                                 }}
                             >
-                                <Image
-                                    src={imgUrlLogo || noAvtImg}
-                                    preview={false}
-                                    width={'25%'}
-                                    style={{
-                                        position: 'relative',
-                                        top: '40%',
-                                    }}
-                                />
+                                {
+                                    !imgUrlLogo ? (
+                                        <Image
+                                            src={imgUrlLogo || noAvtImg}
+                                            preview={false}
+                                            width={'25%'}
+                                            style={{
+                                                position: 'relative',
+                                                top: '40%',
+                                            }}
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={imgUrlLogo}
+                                            preview={false}
+                                            width={'100%'}
+                                            height={'100%'}
+                                            style={{
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    )
+                                }
                             </div>
                         </label>
                     </div>
@@ -234,7 +250,7 @@ const Forms = ({ account }) => {
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
                     Banner collection
@@ -274,15 +290,29 @@ const Forms = ({ account }) => {
                                     backgroundColor: '#C4C4C4'
                                 }}
                             >
-                                <Image
-                                    src={imgUrlBanner || noAvtImg}
-                                    preview={false}
-                                    width={'7%'}
-                                    style={{
-                                        position: 'relative',
-                                        top: '40%'
-                                    }}
-                                />
+                                {
+                                    !imgUrlBanner ? (
+                                        <Image
+                                            src={imgUrlBanner || noAvtImg}
+                                            preview={false}
+                                            width={'7%'}
+                                            style={{
+                                                position: 'relative',
+                                                top: '40%'
+                                            }}
+                                        />
+                                    ) : (
+                                        <Image
+                                            src={imgUrlBanner}
+                                            preview={false}
+                                            width={'100%'}
+                                            height={'100%'}
+                                            style={{
+                                                objectFit: 'cover'
+                                            }}
+                                        />
+                                    )
+                                }
                             </div>
                         </label>
                     </div>
@@ -290,7 +320,7 @@ const Forms = ({ account }) => {
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
                     Name collection
@@ -313,14 +343,15 @@ const Forms = ({ account }) => {
                     <Input
                         placeholder="Collection name"
                         style={{
-                            padding: '1em'
+                            padding: '1em',
+                            borderRadius: '10px'
                         }}
                     />
                 </Form.Item>
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
                     Description
@@ -343,44 +374,15 @@ const Forms = ({ account }) => {
                     <TextArea rows={6}
                         placeholder="Description"
                         style={{
-                            padding: '1em'
+                            padding: '1em',
+                            borderRadius: '10px'
                         }}
                     />
                 </Form.Item>
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
-                    }}
-                >
-                    Receive address
-                </p>
-                <Form.Item
-                    name={'royaltyPaymentAddress'}
-                    rules={[
-                        () => ({
-                            validator() {
-                                if (paymentAddr !== '') {
-                                    return Promise.resolve()
-                                }
-                                return Promise.reject('Please input payment address!')
-                            }
-                        }),
-                    ]}
-                >
-                    <Input
-                        placeholder="Royalty payment address"
-                        defaultValue={JSON.parse(account).account.address}
-                        onChange={handleChangeAddress}
-                        style={{
-                            padding: '1em'
-                        }}
-                    />
-                </Form.Item>
-                <p
-                    style={{
-                        ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
                     External link
@@ -426,14 +428,15 @@ const Forms = ({ account }) => {
                         placeholder="External link"
                         style={{
                             padding: '1em',
-                            color: '#286afa'
+                            color: '#286afa',
+                            borderRadius: '10px'
                         }}
                     />
                 </Form.Item>
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
                     Limit per address
@@ -460,15 +463,16 @@ const Forms = ({ account }) => {
                         style={{
                             padding: '.25em',
                             width: '20%',
-                            fontSize: '20px'
+                            fontSize: '20px',
+                            borderRadius: '10px'
                         }}
                     />
                 </Form.Item>
-                {/* <div
+                <div
                     style={{
                         display: 'flex',
                         justifyContent: 'space-between',
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
                     <div>
@@ -502,11 +506,12 @@ const Forms = ({ account }) => {
                             defaultValue={true}
                         />
                     </Form.Item>
-                </div> */}
+                </div>
+                
                 <p
                     style={{
                         ...style.label,
-                        marginTop: '50px'
+                        marginTop: '30px'
                     }}
                 >
                     {
@@ -523,22 +528,48 @@ const Forms = ({ account }) => {
                         onChange={handleSlider}
                     />
                 </Form.Item>
-                <div>
+                <div
+                    style={{
+                        display: 'flex',
+                        justifyContent: 'start'
+                    }}
+                >
                     <button
-                        htmltype="submit"
+                        htmlType="submit"
                         style={{
                             border: 0,
                             backgroundColor: '#EEC13F',
                             color: '#000000',
-                            fontSize: '24px',
+                            fontSize: '16px',
                             fontWeight: 'bold',
-                            marginTop: '50px',
-                            padding: '0.5em 2em',
-                            cursor: 'pointer'
+                            marginTop: '30px',
+                            marginRight: '15px',
+                            padding: '1em 0',
+                            width: '20%',
+                            cursor: 'pointer',
+                            borderRadius: '10px'
                         }}
                     >
                         Create
                     </button>
+                    <Link
+                        to='/create'
+                        style={{
+                            border: 0,
+                            backgroundColor: '#EEC13F',
+                            color: '#000000',
+                            fontSize: '16px',
+                            fontWeight: 'bold',
+                            marginTop: '30px',
+                            padding: '1em 0',
+                            width: '20%',
+                            cursor: 'pointer',
+                            borderRadius: '10px',
+                            textAlign: 'center'
+                        }}
+                    >
+                        Back
+                    </Link>
                 </div>
             </Form>
         </div >

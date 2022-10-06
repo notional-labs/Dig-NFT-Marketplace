@@ -92,10 +92,10 @@ const WalletButton = ({ account, wrapSetAccount }) => {
                                 style={{
                                     textAlign: 'center',
                                     fontSize: '24px',
-                                    border: 'solid 1px #EEC13F',
-                                    color: '#ffffff',
+                                    color: 'black',
                                     padding: '1em',
-                                    borderRadius: '10px'
+                                    borderRadius: '10px',
+                                    backgroundColor: 'white'
                                 }}
                             >
                                 <p
@@ -109,7 +109,8 @@ const WalletButton = ({ account, wrapSetAccount }) => {
                                 <p
                                     style={{
                                         margin: 0,
-                                        color: '#EEC13F'
+                                        color: '#EEC13F',
+                                        fontWeight: 'bold'
                                     }}
                                 >
                                     DIG
