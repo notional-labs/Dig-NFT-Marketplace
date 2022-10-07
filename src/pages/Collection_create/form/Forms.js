@@ -1,4 +1,4 @@
-import { Form, Input, Slider, InputNumber, Image, Switch } from "antd"
+import { Form, Input, Slider, InputNumber, Image, Switch, Checkbox, Row, Col, } from "antd"
 import { useState } from "react";
 import { createCollection } from "../../../anonejs/createCollection";
 import { openNotification, openLoadingNotification } from "../../../components/notifications/notification";
@@ -13,14 +13,14 @@ const checkValidString = (string) => {
 
 }
 
-// const options = [
-//     { label: 'Sneaker', value: 'sneaker' },
-//     { label: 'Shoes', value: 'shoes' },
-//     { label: 'Sport shoes', value: 'sport shoes' },
-//     { label: 'Running shoes', value: 'running shoes' },
-//     { label: 'Boots', value: 'boots' },
-//     { label: 'Sandal', value: 'sandal' },
-// ];
+const options = [
+    { label: 'Real estate', value: 'real estate' },
+    { label: 'Apartment', value: 'apartment' },
+    { label: 'Villa', value: 'villa' },
+    { label: 'Hotel', value: 'hotel' },
+    { label: 'Office', value: 'office' },
+    { label: 'Another', value: 'another' },
+];
 
 const style = {
     container: {
@@ -390,10 +390,30 @@ const Forms = ({ account }) => {
                 <Form.Item
                     name={'externalLink'}
                 >
-                    {/* <Checkbox.Group
+                    <Input
+                        placeholder="External link"
+                        style={{
+                            padding: '1em',
+                            color: '#286afa',
+                            borderRadius: '10px'
+                        }}
+                    />
+                </Form.Item>
+                <p
+                    style={{
+                        ...style.label,
+                        marginTop: '30px'
+                    }}
+                >
+                    Categories
+                </p>
+                <Form.Item
+                    name={'categories'}
+                >
+                    <Checkbox.Group
                         style={{
                             width: '100%',
-                            marginTop: '20px'
+                            marginTop: '10px'
                         }}
                     >
                         <Row>
@@ -423,15 +443,7 @@ const Forms = ({ account }) => {
                                 })
                             }
                         </Row>
-                    </Checkbox.Group> */}
-                    <Input
-                        placeholder="External link"
-                        style={{
-                            padding: '1em',
-                            color: '#286afa',
-                            borderRadius: '10px'
-                        }}
-                    />
+                    </Checkbox.Group>
                 </Form.Item>
                 <div
                     style={{
