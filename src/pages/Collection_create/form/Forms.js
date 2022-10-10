@@ -6,6 +6,7 @@ import { ipfsUpload } from "../../../anonejs/ipfsUpload";
 import noAvtImg from "../../../assets/img/no-avt-img.png";
 import { Link } from "react-router-dom";
 import "./Forms.css";
+import ImageFormCard from "./ImageFormCard";
 
 const { TextArea } = Input;
 
@@ -43,6 +44,10 @@ const Forms = ({ account }) => {
     const [loading, setLoading] = useState(false)
     const [imgUrlLogo, setImgUrlLogo] = useState('')
     const [imgUrlBanner, setImgUrlBanner] = useState('')
+    const [featureImgs, setFeatureImgs] = useState({
+        banner1: '',
+        imagesRow: ['', '', '']
+    })
     const [paymentAddr, setPaymentAddr] = useState(JSON.parse(account).account.address)
     const [share, setShare] = useState(0)
 
@@ -100,8 +105,21 @@ const Forms = ({ account }) => {
             if (reader.readyState === 2) {
                 if (type === 'logo') {
                     setImgUrlLogo(reader.result)
-                } else {
+                } else if (type === 'banner') {
                     setImgUrlBanner(reader.result)
+                } else if (type === 'feature-1') {
+                    setFeatureImgs({
+                        ...featureImgs,
+                        banner1: reader.result 
+                    })
+                } else {
+                    const index = type.substring(type.length - 1)
+                    let newArr = [...featureImgs.imagesRow]
+                    newArr[index] = reader.result 
+                    setFeatureImgs({
+                        ...featureImgs,
+                        imagesRow: [...newArr]
+                    })
                 }
             }
         }
@@ -316,6 +334,30 @@ const Forms = ({ account }) => {
                             </div>
                         </label>
                     </div>
+                </Form.Item>
+                <p
+                    style={{
+                        ...style.label,
+                        marginTop: '30px'
+                    }}
+                >
+                    Featured image
+                </p>
+                <p
+                    style={{
+                        ...style.label,
+                        fontSize: '10px',
+                    }}
+                >
+                    This image will be used for featuring your collection.
+                </p>
+                <Form.Item
+                    name={'feature_images'}
+                >
+                   <ImageFormCard
+                        featureImage={featureImgs}
+                        handleChange={handleChange}
+                   />
                 </Form.Item>
                 <p
                     style={{

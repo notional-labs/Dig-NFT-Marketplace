@@ -518,19 +518,19 @@ const Forms = ({ account }) => {
                         images.length < 30 && (
                             <div>
                                 <Button
-                                        type={'function'}
-                                        style={{
-                                            position: 'relative',
-                                            left: '90%',
-                                            top: '15px',
-                                            border: 0,
-                                            borderRadius: '50%',
-                                            cursor: 'pointer',
-                                            backgroundColor: 'transparent',
-                                            zIndex: 2,
-                                            aspectRatio: '1/1'
-                                        }}
-                                    />
+                                    type={'function'}
+                                    text={<CloseOutlined />}
+                                    style={{
+                                        position: 'relative',
+                                        left: '90%',
+                                        top: '15px',
+                                        border: 0,
+                                        borderRadius: '50%',
+                                        backgroundColor: 'transparent',
+                                        zIndex: 2,
+                                        aspectRatio: '1/1'
+                                    }}
+                                />
                                 <Button
                                     type={'function'}
                                     text={<Image

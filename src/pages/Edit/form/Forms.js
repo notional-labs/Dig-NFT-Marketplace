@@ -340,10 +340,12 @@ const Forms = ({ account }) => {
                         prefix={<Image
                             src={webImg}
                             preview={false}
+                            width={'20px'}
                         />}
                         style={{
                             padding: '1em',
                             color: '#286afa',
+                            borderRadius: '10px',
                             borderRadius: '10px'
                         }}
                     />
@@ -356,6 +358,7 @@ const Forms = ({ account }) => {
                         prefix={<Image
                             src={facebookImg}
                             preview={false}
+                            width={'20px'}
                         />}
                         style={{
                             padding: '1em',
@@ -371,6 +374,7 @@ const Forms = ({ account }) => {
                         prefix={<Image
                             src={igImg}
                             preview={false}
+                            width={'20px'}
                         />}
                         style={{
                             padding: '1em',
@@ -386,6 +390,7 @@ const Forms = ({ account }) => {
                         prefix={<Image
                             src={twitterImg}
                             preview={false}
+                            width={'20px'}
                         />}
                         style={{
                             padding: '1em',
@@ -401,6 +406,7 @@ const Forms = ({ account }) => {
                         prefix={<Image
                             src={behanceImg}
                             preview={false}
+                            width={'20px'}
                         />}
                         style={{
                             padding: '1em',
