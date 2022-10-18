@@ -1,8 +1,5 @@
-import { Modal, Image, Input } from "antd"
+import { Modal } from "antd"
 import Button from "../buttons/Button"
-import { dummyConnectWallet } from "../../utils/getKeplr"
-import keplrLogo from '../../assets/img/keplr.png'
-import { openNotification } from '../notifications/notification'
 
 const style = {
     button: {

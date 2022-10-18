@@ -1,6 +1,6 @@
 import { Modal, Image } from "antd"
 import Button from "../buttons/Button"
-import { dummyConnectWallet } from "../../utils/getKeplr"
+import { connectWallet } from "../../utils/getKeplr"
 import keplrLogo from '../../assets/img/keplr.png'
 import { openNotification } from '../notifications/notification'
 
@@ -40,7 +40,7 @@ const ConnectWalletModal = ({ show, wrapSetShow, wrapSetAccount }) => {
 
 
     const handleClick = () => {
-        dummyConnectWallet().then(() => {
+        connectWallet().then(() => {
             wrapSetAccount(localStorage.getItem('account'))
             wrapSetShow(false)
             openNotification('success', 'Connect successfully')

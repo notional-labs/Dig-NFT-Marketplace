@@ -1,7 +1,9 @@
 import { Image, Typography } from "antd"
 import Contact from "../contact/Contact"
 import verifiedImg from '../../../assets/img/verified.png'
+import noImg from '../../../assets/img/no_image.png'
 import Asset from "../asset/Asset"
+import { getDate } from "../../../utils/stringConvert"
 
 const style = {
     address: {
@@ -19,8 +21,7 @@ const style = {
     }
 }
 
-const Banner = ({ user, type, id, info, isCollection }) => {
-    console.log(info)
+const Banner = ({ user, type, id, isCollection }) => {
     return (
         <div>
             <div
@@ -30,13 +31,14 @@ const Banner = ({ user, type, id, info, isCollection }) => {
             >
                 <div
                     style={{
+                        backgroundColor: 'gray',
                         backgroundImage: `url(${type === 'profile' ? JSON.parse(user).banner_img : JSON.parse(user).user.banner_img
                             })`,
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
                         height: '35vh',
-                        display: 'block'
+                        display: 'block',
                     }}
                 />
                 <div
@@ -66,19 +68,37 @@ const Banner = ({ user, type, id, info, isCollection }) => {
                         }}
                     >
                         <div>
-                            <Image
-                                src={
-                                    type === 'profile' ? JSON.parse(user).avt : JSON.parse(user).user.avt
-                                }
-                                preview={false}
-                                width={'55%'}
-                                style={{
-                                    borderRadius: '50%',
-                                    position: 'relative',
-                                    border: 'solid 2px white',
-                                    marginBottom: '20px'
-                                }}
-                            />
+                            {JSON.parse(user).avt || JSON.parse(user).user.logo ? (
+                                <Image
+                                    src={
+                                        type === 'profile' ? JSON.parse(user).avt : JSON.parse(user).user.logo
+                                    }
+                                    preview={false}
+                                    width={'55%'}
+                                    style={{
+                                        borderRadius: '50%',
+                                        position: 'relative',
+                                        border: 'solid 2px white',
+                                        marginBottom: '20px',
+                                        aspectRatio: '1/1'
+                                    }}
+                                    fallback={noImg}
+                                />
+                            ) : (
+                                <Image
+                                    src={noImg}
+                                    preview={false}
+                                    width={'55%'}
+                                    style={{
+                                        borderRadius: '50%',
+                                        position: 'relative',
+                                        border: 'solid 2px white',
+                                        marginBottom: '20px',
+                                        aspectRatio: '1/1',
+                                        objectFit: 'cover'
+                                    }}
+                                />
+                            )}
                             <p
                                 style={{
 
@@ -89,7 +109,7 @@ const Banner = ({ user, type, id, info, isCollection }) => {
                                 }}
                             >
                                 {
-                                    type === 'profile' ? JSON.parse(user).userName : JSON.parse(user).user.userName
+                                    type === 'profile' ? JSON.parse(user).userName : JSON.parse(user).user.name
                                 }
                                 <Image
                                     src={verifiedImg}
@@ -116,13 +136,13 @@ const Banner = ({ user, type, id, info, isCollection }) => {
                                 ) : type === 'profile' && (
                                     <Typography.Paragraph
                                         copyable={{
-                                            text: JSON.parse(info).addr,
+                                            text: JSON.parse(user).addr,
                                         }}
                                     >
                                         <p
                                             style={style.address}
                                         >
-                                            {JSON.parse(info).addr}
+                                            {JSON.parse(user).addr}
                                         </p>
                                     </Typography.Paragraph>
                                 )
@@ -146,6 +166,7 @@ const Banner = ({ user, type, id, info, isCollection }) => {
                             </p>
                             <Contact
                                 type={type}
+                                user={user}
                             />
                         </div>
                         <div>
@@ -156,13 +177,13 @@ const Banner = ({ user, type, id, info, isCollection }) => {
                                 }}
                             />
                             <p>
-                                Member since Dec 02, 2021
+                                Member since {getDate(JSON.parse(user).user.joinDate)}
                             </p>
                         </div>
                     </div>
                     <Asset
                         id={id}
-                        info={info}
+                        user={user}
                         type={type}
                         isCollection={isCollection}
                     />

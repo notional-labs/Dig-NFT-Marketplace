@@ -80,7 +80,6 @@ const Profile = ({ type, account, wrapSetAccount, isCollection }) => {
                                         user={account}
                                         type={type}
                                         id={id}
-                                        info={info}
                                         isCollection={isCollection}
                                     />
                                 ) : (
@@ -88,7 +87,6 @@ const Profile = ({ type, account, wrapSetAccount, isCollection }) => {
                                         user={info}
                                         type={type}
                                         id={id}
-                                        info={info}
                                         isCollection={isCollection}
                                     />
                                 ) : (

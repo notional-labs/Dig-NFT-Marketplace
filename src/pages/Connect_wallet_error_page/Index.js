@@ -1,6 +1,6 @@
 import Button from "../../components/buttons/Button"
 import keplrImg from '../../assets/img/keplr.png'
-import { dummyConnectWallet } from "../../utils/getKeplr"
+import { connectWallet, dummyConnectWallet } from "../../utils/getKeplr"
 import { openNotification } from "../../components/notifications/notification"
 import './Index.css'
 import { Image } from "antd"
@@ -36,7 +36,7 @@ const buttonText = (
 const ConnectWalletPage = ({ wrapSetAccount }) => {
 
     const handleClick = () => {
-        dummyConnectWallet().then(() => {
+        connectWallet().then(() => {
             wrapSetAccount(localStorage.getItem('account'))
             openNotification('success', 'Connect successfully')
         }).catch(e => {

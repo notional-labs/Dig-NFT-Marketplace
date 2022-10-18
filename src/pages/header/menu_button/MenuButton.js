@@ -7,6 +7,7 @@ import './MenuButton.css'
 import { MdOutlineAccountCircle, MdLogout } from "react-icons/md";
 import { FiSettings } from "react-icons/fi";
 import { BsCollection } from 'react-icons/bs'
+import noImg from '../../../assets/img/no_image.png'
 
 
 const style = {
@@ -114,16 +115,32 @@ const MenuButton = ({ account, wrapSetAccount, pathname }) => {
                     style={style.button}
                     url={`${process.env.REACT_APP_HOST}/user/profile`}
                     text={
-                        <Image
-                            src={JSON.parse(account).user.avt}
-                            preview={false}
-                            width={40}
-                            style={{
-                                ...style.buttonImg,
-                                borderRadius: '50%',
-                                border: pathname.includes('user/profile') ? 'solid 2px #EEC13F' : 'solid 2px #ffffff'
-                            }}
-                        />
+                        JSON.parse(account).user.avt ? (
+                            <Image
+                                src={JSON.parse(account).user.avt}
+                                preview={false}
+                                width={40}
+                                style={{
+                                    ...style.buttonImg,
+                                    borderRadius: '50%',
+                                    border: pathname.includes('user/profile') ? 'solid 2px #EEC13F' : 'solid 2px #ffffff'
+                                }}
+                            />
+                        ) : (
+                            <Image
+                                src={noImg}
+                                preview={false}
+                                width={40}
+                                style={{
+                                    borderRadius: '50%',
+                                    position: 'relative',
+                                    border: 'solid 2px white',
+                                    marginBottom: '20px',
+                                    aspectRatio: '1/1',
+                                    objectFit: 'cover'
+                                }}
+                            />
+                        )
                     }
                 />
                 {

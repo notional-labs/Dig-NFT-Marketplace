@@ -1,6 +1,6 @@
 import { SigningCosmWasmClient } from "@cosmjs/cosmwasm-stargate";
 import { digChain } from "../data/data/dig";
-import { dummyLogin } from "./api/user";
+import { getUserFromAddress } from "./api/user";
 
 export const getKeplr = async () => {
     if (!window.getOfflineSigner || !window.keplr) {
@@ -34,11 +34,11 @@ export const getWasmClient = async () => {
 }
 
 
-export const dummyConnectWallet = async () => {
+export const connectWallet = async () => {
     const { accounts } = await getKeplr()
 
     if(!accounts || accounts.length === 0) return
-    const user = dummyLogin(accounts[0].address)
+    const user = await getUserFromAddress(accounts[0].address)
 
     if (localStorage.getItem('account') === null) {
         localStorage.setItem('account', JSON.stringify({

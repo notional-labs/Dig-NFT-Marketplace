@@ -1,12 +1,9 @@
-import { Modal, Image, InputNumber, Select } from "antd"
+import { Modal, Image, InputNumber } from "antd"
 import Button from "../buttons/Button"
-import { dummyConnectWallet } from "../../utils/getKeplr"
-import keplrLogo from '../../assets/img/keplr.png'
 import { openNotification, openLoadingNotification } from '../notifications/notification'
 import { useEffect, useState } from "react"
 import { createSale } from "../../anonejs/createSale"
 import { zeroPad } from "../../utils/format"
-import { getBalance } from "../../utils/user/getBalance"
 
 const style = {
     button: {

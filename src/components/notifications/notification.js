@@ -14,7 +14,7 @@ export const openNotification = (type, message) => {
     });
 };
 
-export const openLoadingNotification = (cmd) => {
+export const openLoadingNotification = (cmd, message = '') => {
     if (cmd === 'open') {
         notification.open({
             key: 'updatable',
@@ -39,7 +39,7 @@ export const openLoadingNotification = (cmd) => {
                             marginBottom: 0
                         }}
                     >
-                        Broadcast Transaction
+                       {message}
                     </p>
                 </div>
             ),

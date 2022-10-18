@@ -1,10 +1,6 @@
-import { Form, Input, Slider, InputNumber, Image } from "antd"
+import { Form, Input, Image } from "antd"
 import { useState } from "react";
-import { createCollection } from "../../../anonejs/createCollection";
-import { openNotification } from "../../../components/notifications/notification";
-import { ipfsUpload } from "../../../anonejs/ipfsUpload";
-import noImg from "../../../assets/img/no_image.png";
-import emailImg from '../../../assets/img/email.png'
+import { openLoadingNotification, openNotification } from "../../../components/notifications/notification";
 import facebookImg from '../../../assets/img/facebook.png'
 import igImg from '../../../assets/img/instagram.png'
 import twitterImg from '../../../assets/img/twit.png'
@@ -12,6 +8,8 @@ import behanceImg from '../../../assets/img/behance.png'
 import webImg from '../../../assets/img/web.png'
 import noAvtImg from '../../../assets/img/no-avt-img.png'
 import './Forms.css'
+import { useEffect } from "react";
+import { updateUser } from "../../../utils/api/user";
 
 const { TextArea } = Input;
 
@@ -40,11 +38,37 @@ const Forms = ({ account }) => {
     const [imgUrlBanner, setImgUrlBanner] = useState('')
     const [paymentAddr, setPaymentAddr] = useState(JSON.parse(account).account.address)
 
+    useEffect(() => {
+        JSON.parse(account) && JSON.parse(account).user && setImgUrlLogo((JSON.parse(account).user.logo))
+        JSON.parse(account) && JSON.parse(account).user && setImgUrlBanner((JSON.parse(account).user.banner))
+    }, [account])
+
     const update = async (values) => {
-        let val = { ...values }
-        val.log = imgUrlLogo
-        val.banner = imgUrlBanner
-        console.log(val)
+        try {
+            openLoadingNotification('open', 'Updating')
+            let val = { ...values }
+            val.logo = imgUrlLogo
+            val.banner = imgUrlBanner
+            const inputUser = {
+                name: val.name,
+                description: val.description,
+                logo: val.logo,
+                banner: val.banner,
+                socials: {
+                    website: val.websiteLink,
+                    facebook: val.facebookLink,
+                    instagram: val.instagramLink,
+                    twitter: val.twitterLink,
+                    behance: val.behanceLink
+                }
+            }
+            await updateUser(inputUser, JSON.parse(account).account.address)
+            openLoadingNotification('close')
+            openNotification('success', 'Update successfully')
+        }
+        catch(e) {
+            openNotification('error', e.message)
+        }
     }
 
     const submitFail = () => {
@@ -92,7 +116,7 @@ const Forms = ({ account }) => {
             </p>
             <Form
                 form={form}
-                onFinish={update}
+                onFinish={async () => {await update()}}
                 onReset={reset}
                 onFinishFailed={submitFail}
                 layout="vertical"
@@ -264,6 +288,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             borderRadius: '10px'
                         }}
+                        defaultValue={JSON.parse(account).user.name}
                     />
                 </Form.Item>
                 <p
@@ -292,6 +317,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             borderRadius: '10px'
                         }}
+                        defaultValue={JSON.parse(account).user.description}
                     />
                 </Form.Item>
                 <p
@@ -348,6 +374,7 @@ const Forms = ({ account }) => {
                             borderRadius: '10px',
                             borderRadius: '10px'
                         }}
+                        defaultValue={JSON.parse(account).user.socials.website}
                     />
                 </Form.Item>
                 <Form.Item
@@ -364,6 +391,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             color: '#286afa',
                         }}
+                        defaultValue={JSON.parse(account).user.socials.facebook}
                     />
                 </Form.Item>
                 <Form.Item
@@ -380,6 +408,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             color: '#286afa',
                         }}
+                        defaultValue={JSON.parse(account).user.socials.instagram}
                     />
                 </Form.Item>
                 <Form.Item
@@ -396,6 +425,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             color: '#286afa',
                         }}
+                        defaultValue={JSON.parse(account).user.socials.twitter}
                     />
                 </Form.Item>
                 <Form.Item
@@ -412,6 +442,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             color: '#286afa',
                         }}
+                        defaultValue={JSON.parse(account).user.socials.behance}
                     />
                 </Form.Item>
                 <p
