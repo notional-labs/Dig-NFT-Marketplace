@@ -10,7 +10,7 @@ notification.config({
 export const openNotification = (type, message) => {
     notification[type]({
         message,
-        duration: 30000,
+        duration: 3,
     });
 };
 

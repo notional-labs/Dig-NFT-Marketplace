@@ -8,8 +8,8 @@ import behanceImg from '../../../assets/img/behance.png'
 import webImg from '../../../assets/img/web.png'
 import noAvtImg from '../../../assets/img/no-avt-img.png'
 import './Forms.css'
-import { useEffect } from "react";
-import { updateUser } from "../../../utils/api/user";
+import { useEffect } from "react"
+import { updateUser } from "../../../utils/api/user"
 
 const { TextArea } = Input;
 
@@ -33,7 +33,6 @@ const style = {
 
 const Forms = ({ account }) => {
     const [form] = Form.useForm()
-    const [loading, setLoading] = useState(false)
     const [imgUrlLogo, setImgUrlLogo] = useState('')
     const [imgUrlBanner, setImgUrlBanner] = useState('')
     const [paymentAddr, setPaymentAddr] = useState(JSON.parse(account).account.address)
@@ -49,22 +48,29 @@ const Forms = ({ account }) => {
             let val = { ...values }
             val.logo = imgUrlLogo
             val.banner = imgUrlBanner
+            const currentAccount = JSON.parse(account).user
+            const currentSocials = currentAccount.socials || {}
             const inputUser = {
                 name: val.name,
                 description: val.description,
                 logo: val.logo,
                 banner: val.banner,
                 socials: {
-                    website: val.websiteLink,
-                    facebook: val.facebookLink,
-                    instagram: val.instagramLink,
-                    twitter: val.twitterLink,
-                    behance: val.behanceLink
+                    website: val.websiteLink || currentSocials.website,
+                    facebook: val.facebookLink || currentSocials.facebook,
+                    instagram: val.instagramLink || currentSocials.instagram,
+                    twitter: val.twitterLink || currentSocials.twitter,
+                    behance: val.behanceLink || currentSocials.behance
                 }
             }
-            await updateUser(inputUser, JSON.parse(account).account.address)
+            const updatedUser = await updateUser(inputUser, JSON.parse(account).account.address)
+            localStorage.setItem('account', JSON.stringify({
+                ...JSON.parse(account),
+                user: updatedUser
+            }))
             openLoadingNotification('close')
             openNotification('success', 'Update successfully')
+            window.location.assign(`${process.env.REACT_APP_HOST}/user/profile`)
         }
         catch(e) {
             openNotification('error', e.message)
@@ -116,7 +122,7 @@ const Forms = ({ account }) => {
             </p>
             <Form
                 form={form}
-                onFinish={async () => {await update()}}
+                onFinish={async (values) => {await update(values)}}
                 onReset={reset}
                 onFinishFailed={submitFail}
                 layout="vertical"
@@ -374,7 +380,7 @@ const Forms = ({ account }) => {
                             borderRadius: '10px',
                             borderRadius: '10px'
                         }}
-                        defaultValue={JSON.parse(account).user.socials.website}
+                        defaultValue={JSON.parse(account).user.socials && JSON.parse(account).user.socials.website}
                     />
                 </Form.Item>
                 <Form.Item
@@ -391,7 +397,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             color: '#286afa',
                         }}
-                        defaultValue={JSON.parse(account).user.socials.facebook}
+                        defaultValue={JSON.parse(account).user.socials && JSON.parse(account).user.socials.facebook}
                     />
                 </Form.Item>
                 <Form.Item
@@ -408,7 +414,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             color: '#286afa',
                         }}
-                        defaultValue={JSON.parse(account).user.socials.instagram}
+                        defaultValue={JSON.parse(account).user.socials && JSON.parse(account).user.socials.instagram}
                     />
                 </Form.Item>
                 <Form.Item
@@ -425,7 +431,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             color: '#286afa',
                         }}
-                        defaultValue={JSON.parse(account).user.socials.twitter}
+                        defaultValue={JSON.parse(account).user.socials && JSON.parse(account).user.socials.twitter}
                     />
                 </Form.Item>
                 <Form.Item
@@ -442,7 +448,7 @@ const Forms = ({ account }) => {
                             padding: '1em',
                             color: '#286afa',
                         }}
-                        defaultValue={JSON.parse(account).user.socials.behance}
+                        defaultValue={JSON.parse(account).user.socials && JSON.parse(account).user.socials.behance}
                     />
                 </Form.Item>
                 <p
