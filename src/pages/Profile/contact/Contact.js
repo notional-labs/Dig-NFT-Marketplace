@@ -31,7 +31,42 @@ const style = {
     }
 }
 
-const Contact = ({ type, info, id, account }) => {
+const contactImgs = {
+    website: emailImg,
+    facebook: facebookImg,
+    twitter: twitterImg,
+    behance: behanceImg,
+    instagram: igImg
+}
+
+const getContact = (socials) => {
+    if ( !socials ) return 
+    let jsx = []
+    for (let key in socials) {
+        if (socials[key] === '') {
+            continue
+        }
+        jsx.push(
+            <p>
+                <a
+                    href={socials[key]}
+                    target='_blank'
+                    rel='noreferrer'
+                >
+                    <Image
+                        src={contactImgs[key]}
+                        preview={false}
+                        width={'50%'}
+
+                    />
+                </a>
+            </p>
+        )
+    }
+    return jsx
+}
+
+const Contact = ({ type, info, id, account, user }) => {
     let location = useLocation();
 
     const handleClick = () => {
@@ -180,54 +215,9 @@ const Contact = ({ type, info, id, account }) => {
                     <div
                         style={style.contactContainer}
                     >
-                        <p>
-                            <Image
-                                src={emailImg}
-                                preview={false}
-                                width={'50%'}
-
-                            />
-                        </p>
-                        <p>
-                            <Image
-                                src={facebookImg}
-                                preview={false}
-                                width={'50%'}
-
-                            />
-                        </p>
-                        <p>
-                            <Image
-                                src={twitterImg}
-                                preview={false}
-                                width={'50%'}
-
-                            />
-                        </p>
-                        <p
-                            style={{
-                                margin: 0
-                            }}
-                        >
-                            <Image
-                                src={behanceImg}
-                                preview={false}
-                                width={'50%'}
-
-                            />
-                        </p>
-                        <p
-                            style={{
-                                margin: 0
-                            }}
-                        >
-                            <Image
-                                src={igImg}
-                                preview={false}
-                                width={'50%'}
-
-                            />
-                        </p>
+                        {
+                            JSON.parse(user).user && getContact(JSON.parse(user).user.socials)
+                        }
                     </div>
                 )
             }

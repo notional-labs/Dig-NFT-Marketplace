@@ -10,6 +10,7 @@ import noAvtImg from '../../../assets/img/no-avt-img.png'
 import './Forms.css'
 import { useEffect } from "react"
 import { updateUser } from "../../../utils/api/user"
+import { ipfsUpload } from "../../../anonejs/ipfsUpload";
 
 const { TextArea } = Input;
 
@@ -46,8 +47,14 @@ const Forms = ({ account }) => {
         try {
             openLoadingNotification('open', 'Updating')
             let val = { ...values }
-            val.logo = imgUrlLogo
-            val.banner = imgUrlBanner
+            if (imgUrlLogo) {
+                const logo = await ipfsUpload(imgUrlLogo)
+                val.logo = logo
+            }
+            if (imgUrlBanner) {
+                const banner = await ipfsUpload(imgUrlBanner)
+                val.banner = banner
+            }
             const currentAccount = JSON.parse(account).user
             const currentSocials = currentAccount.socials || {}
             const inputUser = {

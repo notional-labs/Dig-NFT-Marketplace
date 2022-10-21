@@ -3,7 +3,7 @@ import Banner from "./banner/Banner";
 import CollectionBanner from "./banner/CollectionBanner";
 import Asset from "./asset/Asset";
 import Footer from "../footer/Footer";
-import { dummyGetUserById } from "../../utils/api/user";
+import { dummyGetUserById, getUserFromAddress } from "../../utils/api/user";
 import { getCollectionById } from "../../utils/api/collections";
 import ConnectWalletPage from "../Connect_wallet_error_page/Index";
 import { useState, useEffect, useCallback } from "react";
@@ -28,8 +28,8 @@ const Profile = ({ type, account, wrapSetAccount, isCollection }) => {
                 setInfo(account)
             }
             else if (type === 'profile') {
-                const user = dummyGetUserById()
-                user && setInfo(JSON.stringify(user))
+                const user = await getUserFromAddress(id)
+                user && setInfo(JSON.stringify({ user }))
             }
             else if (type === 'collection') {
                 const contractAddr = await queryCollectionAddressOfLaunchpad(id)

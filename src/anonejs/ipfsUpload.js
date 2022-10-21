@@ -1,6 +1,6 @@
 import { create, urlSource } from "ipfs-http-client";
 
-const ipfs = create("https://ipfs.infura.io:5001");
+const ipfs = create(process.env.REACT_APP_IPFS);
 const IPFS_PREFIX = "ipfs://";
 
 export const upload = async (uploadPath) => {

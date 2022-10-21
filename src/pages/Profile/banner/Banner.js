@@ -31,9 +31,8 @@ const Banner = ({ user, type, id, isCollection }) => {
             >
                 <div
                     style={{
+                        backgroundImage: `url("https://ipfs.io/ipfs/${JSON.parse(user).user.banner.split('ipfs://')[1]}")`,
                         backgroundColor: 'gray',
-                        backgroundImage: `url(${type === 'profile' ? JSON.parse(user).banner_img : JSON.parse(user).user.banner_img
-                            })`,
                         backgroundSize: 'cover',
                         backgroundRepeat: 'no-repeat',
                         backgroundPosition: 'center',
@@ -68,10 +67,10 @@ const Banner = ({ user, type, id, isCollection }) => {
                         }}
                     >
                         <div>
-                            {JSON.parse(user).avt || JSON.parse(user).user.logo ? (
+                            {JSON.parse(user).user.logo ? (
                                 <Image
                                     src={
-                                        type === 'profile' ? JSON.parse(user).avt : JSON.parse(user).user.logo
+                                       `https://ipfs.io/ipfs/${JSON.parse(user).user.logo.split('ipfs://')[1]}`
                                     }
                                     preview={false}
                                     width={'55%'}
@@ -109,7 +108,7 @@ const Banner = ({ user, type, id, isCollection }) => {
                                 }}
                             >
                                 {
-                                    type === 'profile' ? JSON.parse(user).userName : JSON.parse(user).user.name
+                                    JSON.parse(user).user.name
                                 }
                                 <Image
                                     src={verifiedImg}
@@ -136,13 +135,13 @@ const Banner = ({ user, type, id, isCollection }) => {
                                 ) : type === 'profile' && (
                                     <Typography.Paragraph
                                         copyable={{
-                                            text: JSON.parse(user).addr,
+                                            text: JSON.parse(user).user.address,
                                         }}
                                     >
                                         <p
                                             style={style.address}
                                         >
-                                            {JSON.parse(user).addr}
+                                            {JSON.parse(user).user.address}
                                         </p>
                                     </Typography.Paragraph>
                                 )
@@ -162,7 +161,7 @@ const Banner = ({ user, type, id, isCollection }) => {
                                     WebkitBoxOrient: 'vertical'
                                 }}
                             >
-                                {type === 'profile' ? JSON.parse(user).description : JSON.parse(user).user.description}
+                                {JSON.parse(user).user.description}
                             </p>
                             <Contact
                                 type={type}
